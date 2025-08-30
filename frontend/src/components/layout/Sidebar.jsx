@@ -36,9 +36,9 @@ const Sidebar = () => {
                 className={({ isActive }) =>
                   `flex items-center p-3 rounded-lg transition-colors ${
                     isActive ? 'bg-blue-900' : 'hover:bg-blue-800'
-                  } ${!['People', 'Client'].includes(item.name) ? 'opacity-50 cursor-not-allowed' : ''}`
+                  } ${!['People', 'Client', 'Task'].includes(item.name) ? 'opacity-50 cursor-not-allowed' : ''}`
                 }
-                onClick={(e) => !['People', 'Client'].includes(item.name) && e.preventDefault()}
+                onClick={(e) => !['People', 'Client', 'Task'].includes(item.name) && e.preventDefault()}
               >
                 {item.icon}
                 <span className="ml-4">{item.name}</span>

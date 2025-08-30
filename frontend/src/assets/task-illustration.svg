@@ -1,0 +1,2 @@
+import taskIllustration from './assets/undraw_pending_tasks_re_jpsu.svg';
+export default taskIllustration;

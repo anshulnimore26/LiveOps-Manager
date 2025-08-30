@@ -11,6 +11,10 @@ import Register from './pages/Register';
 import Client from './pages/Client';
 import AddClient from './pages/AddClient';
 import Sidebar from './components/layout/Sidebar';
+import TaskDashboard from './features/task/pages/TaskDashboard';
+import AddTask from './features/task/pages/AddTask';
+import UploadTask from './features/task/pages/UploadTask';
+import ManualClose from './features/task/pages/ManualClose';
 
 function App() {
   return (
@@ -26,10 +30,15 @@ function App() {
               
               <Route path="/dashboard/people" element={<PeopleDashboard />} />
               <Route path="/dashboard/client" element={<Client />} />
+              <Route path="/dashboard/task" element={<TaskDashboard />} />
               
               <Route path="/add-people" element={<AddPeople />} />
               <Route path="/add-client" element={<AddClient />} />
               <Route path="/person/:personId" element={<PersonDetails />} />
+
+              <Route path="/dashboard/task/add" element={<AddTask />} />
+              <Route path="/dashboard/task/upload" element={<UploadTask />} />
+              <Route path="/dashboard/task/manual-close" element={<ManualClose />} />
               
               <Route path="/" element={<Navigate to="/dashboard/people" />} />
               <Route path="*" element={<Navigate to="/dashboard/people" />} />
