@@ -1,0 +1,2 @@
+export { PeopleDashboard } from './PeopleDashboard';
+
