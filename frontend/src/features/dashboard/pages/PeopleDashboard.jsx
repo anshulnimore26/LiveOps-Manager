@@ -1,5 +1,9 @@
 import { useEffect, useState } from 'react';
-import { Map, Stats, UserInfo, ActionBar, Sidebar, useToast, Header } from '../components';
+import { motion } from 'framer-motion';
+import { Map, Stats, UserInfo, ActionBar, Sidebar, Header } from '../components';
+import { ErrorBoundary } from '../components/ErrorBoundary';
+import { useToast } from '../components/Toast';
+
 
 const currentUser = {
   name: 'Dharamchand Patle',
@@ -14,9 +18,9 @@ export function PeopleDashboard() {
   const [searchQuery, setSearchQuery] = useState('');
   const [currentLocation, setCurrentLocation] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Get user's location
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -26,8 +30,9 @@ export function PeopleDashboard() {
           });
           setLoading(false);
         },
-        (error) => {
-          console.error(error);
+        (err) => {
+          console.error(err);
+          setError('Unable to get your location.');
           setLoading(false);
           addToast({
             type: 'error',
@@ -36,6 +41,7 @@ export function PeopleDashboard() {
         }
       );
     } else {
+      setError('Geolocation is not supported by your browser');
       setLoading(false);
       addToast({
         type: 'error',
@@ -48,19 +54,25 @@ export function PeopleDashboard() {
     setSearchQuery(query);
   };
 
+  const handleAddPerson = () => {
+    // Placeholder for add person logic
+    addToast({
+      type: 'success',
+      message: 'Add Person functionality to be implemented.'
+    });
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-gray-900 dark:to-gray-800">
       <Sidebar />
       <Header />
       <main className="ml-64 pt-24 px-8 pb-8">
-        {/* Breadcrumb */}
         <div className="flex items-center gap-2 text-sm mb-6">
           <span className="text-blue-600 dark:text-blue-400">Home</span>
           <span className="text-gray-400 dark:text-gray-500">/</span>
           <span className="text-gray-600 dark:text-gray-300">People</span>
         </div>
 
-        {/* Content */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -127,9 +139,10 @@ export function PeopleDashboard() {
                   : []
               }
             />
-          </motion.div>
+            </motion.div>
+          </ErrorBoundary>
         </motion.div>
       </main>
-    </motion.div>
+    </div>
   );
 }

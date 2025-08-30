@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { usePeople } from '../context/PeopleContext';
-import { Map } from '../components/Map';
+import { usePeople } from '../../../context/PeopleContext';
+import { Map } from '../../../components/ui/Map';
 import { Search, Plus, Upload, SlidersHorizontal } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import StatCircle from '../components/StatCircle';

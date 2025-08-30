@@ -53,3 +53,19 @@
     @apply bg-background text-foreground;
   }
 }
+
+body {
+  @apply bg-gray-100 dark:bg-gray-900;
+}
+
+.bg-animated-gradient {
+  background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+  background-size: 400% 400%;
+  animation: gradient 15s ease infinite;
+}
+
+.dark .bg-animated-gradient-dark {
+  background: linear-gradient(-45deg, #0f2027, #203a43, #2c5364);
+  background-size: 400% 400%;
+  animation: gradient 15s ease infinite;
+}

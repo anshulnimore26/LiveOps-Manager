@@ -1,337 +1,114 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Alert } from '../components/Alert';
-import { Button } from '../components/Button';
-import { Card, CardContent, CardHeader, CardTitle } from '../components/Card';
+import { useAuth } from '../context/AuthContext';
+import { motion } from 'framer-motion';
 
-export default function Register() {
+const Register = () => {
+  const { register } = useAuth();
   const navigate = useNavigate();
+  const [error, setError] = useState('');
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     password: '',
-    mobileNumber: '',
-    company: '',
-    employeeStrength: '',
+    contact: '',
+    employeeId: '',
     designation: '',
-    companyType: '',
-    termsAccepted: false
+    skills: '',
+    officeLocation: '',
+    claimLimit: '',
+    costFactor: '',
+    workImage: false,
+    workComments: false,
+    checkInRestriction: false,
+    autoTracking: false,
+    role: 'user',
+    status: 'Yet to Start'
   });
-  
-  const [errors, setErrors] = useState({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const validateForm = () => {
-    const newErrors = {};
-    
-    if (!formData.name.trim()) {
-      newErrors.name = 'Name is required';
-    }
-    
-    if (!formData.email.trim()) {
-      newErrors.email = 'Email is required';
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Email is invalid';
-    }
-    
-    if (!formData.password) {
-      newErrors.password = 'Password is required';
-    } else if (formData.password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters';
-    }
-    
-    if (!formData.mobileNumber) {
-      newErrors.mobileNumber = 'Mobile number is required';
-    } else if (!/^\d{10}$/.test(formData.mobileNumber)) {
-      newErrors.mobileNumber = 'Invalid mobile number';
-    }
-    
-    if (!formData.company.trim()) {
-      newErrors.company = 'Company name is required';
-    }
-    
-    if (!formData.employeeStrength) {
-      newErrors.employeeStrength = 'Employee strength is required';
-    }
-    
-    if (!formData.designation.trim()) {
-      newErrors.designation = 'Designation is required';
-    }
-    
-    if (!formData.companyType.trim()) {
-      newErrors.companyType = 'Company type is required';
-    }
-    
-    if (!formData.termsAccepted) {
-      newErrors.termsAccepted = 'You must accept the terms and conditions';
-    }
-    
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    
-    if (!validateForm()) {
-      return;
-    }
-    
-    setIsSubmitting(true);
-    
-    try {
-      // Here you would typically make an API call to register the user
-      // For now, we'll simulate a successful registration
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Redirect to login page after successful registration
-      navigate('/login');
-    } catch (error) {
-      setErrors({
-        submit: 'Registration failed. Please try again.'
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleInputChange = (e) => {
+  const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : value
-    }));
-    
-    // Clear error when user starts typing
-    if (errors[name]) {
-      setErrors(prev => ({
-        ...prev,
-        [name]: undefined
-      }));
+    setFormData(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setError('');
+    const { error: registerError } = register(formData);
+    if (registerError) {
+      setError(registerError);
+    } else {
+      navigate('/dashboard/people');
     }
   };
 
   return (
-    <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center p-4">
-      <div className="w-full max-w-xl">
-        {/* Logo */}
-        <div className="flex justify-center mb-6">
-          <img 
-            src="/logo.png" 
-            alt="MapmyIndia Workmate" 
-            className="h-8"
-          />
-        </div>
-
-        <Card className="w-full bg-white shadow-xl">
-          <CardHeader className="text-center pb-4">
-            <CardTitle className="text-2xl font-semibold">Sign up to Workmate</CardTitle>
-            <p className="text-slate-600 mt-2">
-              Sign up to track your field workforce and get visual insights on your company's operations.
-            </p>
-          </CardHeader>
-          
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              {errors.submit && (
-                <Alert variant="error" className="mb-4">
-                  {errors.submit}
-                </Alert>
-              )}
-              
-              <div className="space-y-2">
-                <label className="text-sm font-medium">
-                  Name<span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleInputChange}
-                  className={`w-full p-2 border rounded-md ${
-                    errors.name ? 'border-red-500' : 'border-slate-300'
-                  }`}
-                  placeholder="Enter your name"
-                />
-                {errors.name && (
-                  <p className="text-red-500 text-sm">{errors.name}</p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium">
-                  Email Address<span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  className={`w-full p-2 border rounded-md ${
-                    errors.email ? 'border-red-500' : 'border-slate-300'
-                  }`}
-                  placeholder="Enter your email"
-                />
-                {errors.email && (
-                  <p className="text-red-500 text-sm">{errors.email}</p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium">
-                  Password<span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="password"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleInputChange}
-                  className={`w-full p-2 border rounded-md ${
-                    errors.password ? 'border-red-500' : 'border-slate-300'
-                  }`}
-                  placeholder="Create a password"
-                />
-                {errors.password && (
-                  <p className="text-red-500 text-sm">{errors.password}</p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium">
-                  Mobile Number<span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="tel"
-                  name="mobileNumber"
-                  value={formData.mobileNumber}
-                  onChange={handleInputChange}
-                  className={`w-full p-2 border rounded-md ${
-                    errors.mobileNumber ? 'border-red-500' : 'border-slate-300'
-                  }`}
-                  placeholder="Enter mobile number"
-                />
-                {errors.mobileNumber && (
-                  <p className="text-red-500 text-sm">{errors.mobileNumber}</p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium">
-                  Company<span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  name="company"
-                  value={formData.company}
-                  onChange={handleInputChange}
-                  className={`w-full p-2 border rounded-md ${
-                    errors.company ? 'border-red-500' : 'border-slate-300'
-                  }`}
-                  placeholder="Enter company name"
-                />
-                {errors.company && (
-                  <p className="text-red-500 text-sm">{errors.company}</p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium">
-                  Employee Strength<span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="number"
-                  name="employeeStrength"
-                  value={formData.employeeStrength}
-                  onChange={handleInputChange}
-                  className={`w-full p-2 border rounded-md ${
-                    errors.employeeStrength ? 'border-red-500' : 'border-slate-300'
-                  }`}
-                  placeholder="Enter employee strength"
-                />
-                {errors.employeeStrength && (
-                  <p className="text-red-500 text-sm">{errors.employeeStrength}</p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium">
-                  Designation<span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  name="designation"
-                  value={formData.designation}
-                  onChange={handleInputChange}
-                  className={`w-full p-2 border rounded-md ${
-                    errors.designation ? 'border-red-500' : 'border-slate-300'
-                  }`}
-                  placeholder="Enter your designation"
-                />
-                {errors.designation && (
-                  <p className="text-red-500 text-sm">{errors.designation}</p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium">
-                  Company Type<span className="text-red-500">*</span>
-                </label>
-                <select
-                  name="companyType"
-                  value={formData.companyType}
-                  onChange={handleInputChange}
-                  className={`w-full p-2 border rounded-md ${
-                    errors.companyType ? 'border-red-500' : 'border-slate-300'
-                  }`}
-                >
-                  <option value="">Select company type</option>
-                  <option value="Private">Private</option>
-                  <option value="Public">Public</option>
-                  <option value="Government">Government</option>
-                  <option value="NGO">NGO</option>
-                </select>
-                {errors.companyType && (
-                  <p className="text-red-500 text-sm">{errors.companyType}</p>
-                )}
-              </div>
-
-              <div className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  name="termsAccepted"
-                  checked={formData.termsAccepted}
-                  onChange={handleInputChange}
-                  className="rounded border-slate-300"
-                />
-                <label className="text-sm text-slate-600">
-                  By signing up you agree to our{' '}
-                  <Link to="/terms" className="text-blue-600 hover:underline">
-                    Terms and Conditions
-                  </Link>
-                </label>
-              </div>
-              {errors.termsAccepted && (
-                <p className="text-red-500 text-sm">{errors.termsAccepted}</p>
-              )}
-
-              <Button
-                type="submit"
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md"
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? 'Signing up...' : 'Sign Up'}
-              </Button>
-
-              <p className="text-center text-sm text-slate-600">
-                Already have an account?{' '}
-                <Link to="/login" className="text-blue-600 hover:underline">
-                  Sign In
-                </Link>
-              </p>
-            </form>
-          </CardContent>
-        </Card>
-      </div>
+    <div className="min-h-screen flex items-center justify-center bg-animated-gradient dark:bg-animated-gradient-dark p-4">
+      <motion.div
+        initial={{ opacity: 0, y: -50 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="w-full max-w-4xl p-8 space-y-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg"
+      >
+        <h1 className="text-3xl font-bold text-center text-gray-900 dark:text-white">Register</h1>
+        <form className="space-y-6" onSubmit={handleSubmit}>
+          {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <InputField label="Employee Name" name="name" value={formData.name} onChange={handleChange} required />
+            <InputField label="Employee Id" name="employeeId" value={formData.employeeId} onChange={handleChange} />
+            <InputField label="Email" name="email" type="email" value={formData.email} onChange={handleChange} required />
+            <InputField label="Password" name="password" type="password" value={formData.password} onChange={handleChange} required />
+            <InputField label="Mobile Number" name="contact" value={formData.contact} onChange={handleChange} required />
+            <InputField label="Monthly Claim Limit(Rs)" name="claimLimit" type="number" value={formData.claimLimit} onChange={handleChange} />
+            <InputField label="Cost Factor" name="costFactor" type="number" value={formData.costFactor} onChange={handleChange} />
+            <InputField label="Skill Sets" name="skills" value={formData.skills} onChange={handleChange} />
+            <InputField label="Office Location" name="officeLocation" value={formData.officeLocation} onChange={handleChange} />
+            <InputField label="Designation" name="designation" value={formData.designation} onChange={handleChange} />
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Role</label>
+              <select name="role" value={formData.role} onChange={handleChange} className="w-full p-2 border rounded-md bg-gray-50 dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
+                <option value="user">User</option>
+                <option value="manager">Manager</option>
+                <option value="admin">Admin</option>
+              </select>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+            <ToggleSwitch label="Start work/Conclude work image" name="workImage" checked={formData.workImage} onChange={handleChange} />
+            <ToggleSwitch label="Odometer values" name="odometer" checked={formData.odometer} onChange={handleChange} />
+            <ToggleSwitch label="Start work/Conclude work comments" name="workComments" checked={formData.workComments} onChange={handleChange} />
+            <ToggleSwitch label="Auto Tracking" name="autoTracking" checked={formData.autoTracking} onChange={handleChange} />
+            <ToggleSwitch label="Unique ID Based Access" name="uniqueIdAccess" checked={formData.uniqueIdAccess} onChange={handleChange} />
+            <ToggleSwitch label="Check-in Boundary Restriction" name="checkInRestriction" checked={formData.checkInRestriction} onChange={handleChange} />
+          </div>
+          <div className="flex justify-end pt-6">
+            <button type="submit" className="w-full md:w-auto py-3 px-6 text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+              Register
+            </button>
+          </div>
+        </form>
+        <p className="text-sm text-center text-gray-600 dark:text-gray-400">
+          Already have an account? <Link to="/login" className="font-medium text-blue-600 hover:underline dark:text-blue-400">Login</Link>
+        </p>
+      </motion.div>
     </div>
   );
-}
+};
+
+const InputField = ({ label, ...props }) => (
+  <div>
+    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{label}</label>
+    <input {...props} className="w-full p-2 border rounded-md bg-gray-50 dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" />
+  </div>
+);
+
+const ToggleSwitch = ({ label, name, checked, onChange }) => (
+  <div className="flex items-center justify-between bg-gray-50 dark:bg-gray-700 p-3 rounded-md">
+    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{label}</span>
+    <label className="relative inline-flex items-center cursor-pointer">
+      <input type="checkbox" name={name} checked={checked} onChange={onChange} className="sr-only peer" />
+      <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-600 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+    </label>
+  </div>
+);
+
+export default Register;
